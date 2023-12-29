@@ -133,7 +133,7 @@ module old_pin(clip)
 	}
 }
 
-module pin(clip)
+module old_pin2(clip)
 {
 	rotate([0,0,15])
 		#cylinder(r=hole_size/2, h=board_thickness*1.5+epsilon, center=true, $fn=12);
@@ -160,6 +160,29 @@ module pin(clip)
 	}
 }
 
+// from https://github.com/MGX3D/pegstr/issues/2
+clip_radius = 5;
+pin_length = board_thickness;
+
+module pin(clip)
+{
+    rotate([0,0,15])
+    cylinder(r=hole_size/2, h=board_thickness*1.5+epsilon, center=true, $fn=12);
+
+    if (clip) {
+        rotate([0,0,-90])
+        translate([0,-clip_radius, pin_length/2])
+        intersection() {
+            rotate([0,90,0])
+            rotate_extrude(convexity = 5, $fn =20)
+            translate([clip_radius,0,0])
+            circle(r = (hole_size*0.95)/2);
+
+            translate([-hole_size/2, 0, 0])
+            cube([hole_size+2*epsilon, clip_radius+hole_size, clip_radius+hole_size], center = false);
+        }
+    }
+}
 
 module pinboard_clips() 
 {
